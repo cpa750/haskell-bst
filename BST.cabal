@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3c883e587b5c2d669d9fb377520faadb7e23b46b88dec184a95fed594214b9cd
+-- hash: d45d6f2c27cfb21ce7943a977f20ce82eeef767656a0d048b1a06924dc493e80
 
 name:           BST
 version:        0.1.0.0
@@ -15,11 +15,9 @@ author:         Author name here
 maintainer:     example@example.com
 copyright:      2021 Author name here
 license:        BSD3
-license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
-    ChangeLog.md
 
 source-repository head
   type: git
@@ -35,6 +33,7 @@ library
   build-depends:
       base >=4.7 && <5
     , random >=1.1
+    , test-framework
   default-language: Haskell2010
 
 executable BST-exe
@@ -48,6 +47,7 @@ executable BST-exe
       BST
     , base >=4.7 && <5
     , random >=1.1
+    , test-framework
   default-language: Haskell2010
 
 test-suite BST-test
@@ -63,4 +63,5 @@ test-suite BST-test
     , QuickCheck
     , base >=4.7 && <5
     , random >=1.1
+    , test-framework
   default-language: Haskell2010

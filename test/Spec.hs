@@ -1,5 +1,8 @@
+import Test.Framework
+
 import System.Random
 import Test.QuickCheck
+
 import BST  
 
 main :: IO ()
