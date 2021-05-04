@@ -1,15 +1,18 @@
+{-# OPTIONS_GHC -F -pgmF htfpp #-}
+
 import Test.Framework
 
 import System.Random
 import Test.QuickCheck
+import Test.HUnit
 
 import BST  
 
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = htfMain htf_thisModulesTests 
 
 ---------------------------------------------------------------------------------
--- Defining the generator for BST
+-- Defining the generator for the BST datatype
 ---------------------------------------------------------------------------------
 
 -- Defining Arbitrary for the BST Type 
@@ -23,16 +26,24 @@ arbitrarySizeBST low high 0 = return Leaf
 arbitrarySizeBST low high n = do
     key     <- choose (low, high) 
     value   <- arbitrary 
-    -- Recursively getting trees. Bounding the inputs so the result is a search tree
-    -- Using abs to make sure we only get positive tree sizes
-    -- Dividing n by 2 so we eventually generate a size 0 tree
+    -- Recursively building the tree.
+    -- Bounding the inputs based on the current key
+    -- so the result is a search tree.
+    -- Using abs to make sure we only get positive tree sizes.
+    -- Dividing n by 2 so we eventually generate a size 0 tree.
     left    <- arbitrarySizeBST low (pred key)  (abs (n `div` 2))
     right   <- arbitrarySizeBST (succ key) high (abs (n `div` 2)) 
     return  $ Node key value left right
 
 
 ---------------------------------------------------------------------------------
--- Testing insertion
+-- Basic tests 
 ---------------------------------------------------------------------------------
 
+test_isEmptyWhenEmpty :: Assertion   
+test_isEmptyWhenEmpty = do assertEqual True (isEmpty Leaf) 
 
+test_isEmptyWhenNotEmpty :: Assertion 
+test_isEmptyWhenNotEmpty = do
+    let tree = Node 1 "A" Leaf Leaf in 
+        assertEqual False (isEmpty tree)
