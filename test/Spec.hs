@@ -6,6 +6,8 @@ import System.Random
 import Test.QuickCheck
 import Test.HUnit
 
+import Prelude hiding (lookup)
+
 import BST  
 
 main :: IO ()
@@ -37,7 +39,7 @@ arbitrarySizeBST low high n = do
 
 
 ---------------------------------------------------------------------------------
--- Basic tests 
+-- Testing isEmpty 
 ---------------------------------------------------------------------------------
 
 test_isEmptyWhenEmpty :: Assertion   
@@ -47,3 +49,16 @@ test_isEmptyWhenNotEmpty :: Assertion
 test_isEmptyWhenNotEmpty = do
     let tree = Node 1 "A" Leaf Leaf in 
         assertEqual False (isEmpty tree)
+
+---------------------------------------------------------------------------------
+-- Testing insert and lookup 
+---------------------------------------------------------------------------------
+test_lookupWhenEmpty :: Assertion 
+test_lookupWhenEmpty = do
+    let tree = Leaf in
+        assertNothing (lookup tree 1 :: Maybe String)
+
+prop_insertAndLookupNotEmpty :: BST Int String -> Int -> String -> Bool
+prop_insertAndLookupNotEmpty tree key value =
+    let tree' = insert tree key value in
+        lookup tree' key == Just value
