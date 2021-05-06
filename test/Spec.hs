@@ -6,6 +6,8 @@ import System.Random
 import Test.QuickCheck
 import Test.HUnit
 
+import Data.Map(Map)
+import qualified Data.Map as Map
 import Prelude hiding (lookup)
 
 import BST  
@@ -13,9 +15,11 @@ import BST
 main :: IO ()
 main = htfMain htf_thisModulesTests 
 
-isValidBST :: (Eq k, Ord k) => BST k v -> Bool
-isValidBST Leaf = True
-isValidBST (Node k v t1 t2)
+isValidBST :: (Eq k, Ord k) => BST k v -> k -> k -> Bool
+isValidBST Leaf                   _   _   = True
+isValidBST (Node key value t1 t2) min max = (key > min) && (key < max) &&
+                                            (isValidBST t1 min key) &&
+                                            (isValidBST t2 key max)
 
 ---------------------------------------------------------------------------------
 -- Defining the generator for the BST datatype
@@ -61,9 +65,18 @@ test_lookupWhenEmpty :: Assertion
 test_lookupWhenEmpty = do
     let tree = Leaf in
         -- Is there a way to do this so a type annotation isn't needed?
-        assertNothing (lookup tree 1 :: Maybe String)
+        assertNothing (lookup 1 tree :: Maybe String)
 
-prop_insertAndLookupNotEmpty :: BST Int String -> Int -> String -> Bool
-prop_insertAndLookupNotEmpty tree key value =
-    let tree' = insert tree key value in
-        lookup tree' key == Just value 
+prop_insertAndLookupNotEmpty ::  Int -> String -> BST Int String -> Bool
+prop_insertAndLookupNotEmpty key value tree =
+    let tree' = insert key value tree in
+        lookup key tree' == Just value 
+
+prop_isValidAfterInsertions :: Map Int String -> Bool
+-- I personally don't like I have to guard against an empty map,
+-- But I can't figure out a way to restrict the input to a non-empty map.
+prop_isValidAfterInsertions map | Map.null map = True
+                                | otherwise = 
+                                    -- Inserting all the elements of the map into the BST
+                                    let tree = Map.foldrWithKey insert Leaf map
+                                    in isValidBST tree minBound maxBound 

@@ -22,6 +22,7 @@ dependencies:
 - base >= 4.7 && < 5
 - random >= 1.1
 - HTF
+- containers
 
 library:
   source-dirs: src
@@ -29,7 +30,7 @@ library:
 executables:
   BST-exe:
     main:                Main.hs
-    source-dirs:         app, src
+    source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts
@@ -40,7 +41,7 @@ executables:
 tests:
   BST-test:
     main:                Spec.hs
-    source-dirs:         test, src
+    source-dirs:         test
     ghc-options:
     - -threaded
     - -rtsopts

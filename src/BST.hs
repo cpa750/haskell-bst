@@ -12,17 +12,17 @@ isEmpty :: BST k v -> Bool
 isEmpty Leaf = True
 isEmpty _    = False
 
-insert :: (Eq k, Ord k) => BST k v -> k -> v -> BST k v
-insert Leaf             key value   = Node key value Leaf Leaf 
-insert (Node k v t1 t2) key value
+insert :: (Eq k, Ord k) => k -> v -> BST k v -> BST k v
+insert key value Leaf               = Node key value Leaf Leaf 
+insert key value (Node k v t1 t2)  
                         | key == k  = Node key value t1 t2
-                        | key > k   = insert t2 key value
-                        | key < k   = insert t1 key value
+                        | key > k   = insert key value t2
+                        | key < k   = insert key value t1
 
 
-lookup :: (Eq k, Ord k) => BST k v -> k -> Maybe v
-lookup Leaf             _          = Nothing
-lookup (Node k v t1 t2) key
+lookup :: (Eq k, Ord k) =>  k -> BST k v -> Maybe v
+lookup _   Leaf                    = Nothing
+lookup key (Node k v t1 t2)
                         | key == k = Just v
-                        | key > k  = lookup t2 key
-                        | key < k  = lookup t1 key
+                        | key > k  = lookup key t2
+                        | key < k  = lookup key t1
