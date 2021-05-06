@@ -13,6 +13,10 @@ import BST
 main :: IO ()
 main = htfMain htf_thisModulesTests 
 
+isValidBST :: (Eq k, Ord k) => BST k v -> Bool
+isValidBST Leaf = True
+isValidBST (Node k v t1 t2)
+
 ---------------------------------------------------------------------------------
 -- Defining the generator for the BST datatype
 ---------------------------------------------------------------------------------
@@ -56,9 +60,10 @@ test_isEmptyWhenNotEmpty = do
 test_lookupWhenEmpty :: Assertion 
 test_lookupWhenEmpty = do
     let tree = Leaf in
+        -- Is there a way to do this so a type annotation isn't needed?
         assertNothing (lookup tree 1 :: Maybe String)
 
 prop_insertAndLookupNotEmpty :: BST Int String -> Int -> String -> Bool
 prop_insertAndLookupNotEmpty tree key value =
     let tree' = insert tree key value in
-        lookup tree' key == Just value
+        lookup tree' key == Just value 
