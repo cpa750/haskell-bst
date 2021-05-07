@@ -150,7 +150,7 @@ prop_insertElementsMatchesInputMapList map =
 
 -- Removing a nonexistent key should not choange the tree
 prop_removeNonexistentKeyDoesntChangeTree :: Map Int String -> Int -> Bool
-prop_removeNonexistentKeyDoesntChangeTree map key 
+prop_removeNonexistentKeyDoesntChangeTree map key = 
     -- Ensuring the key won't already be inserted
     let map'    = Map.delete key map
         mapList = Map.toList map'
@@ -183,7 +183,7 @@ test_removeNodeWithLeftChild =
         let map     = Map.fromList [(1, "a"), (0, "b"), (3, "c"), (2, "d")]
             tree    = insertIntoBST map (Map.keys map) empty
             tree'   = BST.remove 1 tree in
-                assertEqual (BST.elements tree') [(0), "b"), (2, "d"), (3, "c")]
+                assertEqual (BST.elements tree') [(0, "b"), (2, "d"), (3, "c")]
 
 test_removeNodeWithRightChild :: Assertion
 test_removeNodeWithRightChild =
@@ -191,22 +191,22 @@ test_removeNodeWithRightChild =
         let map     = Map.fromList [(1, "a"), (5, "b"), (3, "c"), (4, "d")]
             tree    = insertIntoBST map (Map.keys map) empty
             tree'   = BST.remove 4 tree in
-                assertEqual (BST.elements tree') [(0), "b"), (1, "a"), (5, "b")]
+                assertEqual (BST.elements tree') [(0, "b"), (1, "a"), (5, "b")]
 
 test_removeRootOnlyNode :: Assertion
 test_removeRootOnlyNode = 
     do
-        let tree    = BST.insert 1 "a" 
+        let tree    = BST.insert 1 "a" empty 
             tree'   = BST.remove 1 tree in
                 assertBool (isEmpty tree')
 
 -- This also checks the case of a node with two children being removed,
 -- ensuring the result is still a valid BST
-prop_removeRootStillValidBST :: Map Int Str -> Bool
+prop_removeRootStillValidBST :: Map Int String -> Bool
 prop_removeRootStillValidBST map =
     do
         let tree    = insertIntoBST map (Map.keys map) empty
             -- Getting the first element inserted (root key)
             rootKey = middleElement (Map.keys map)
             tree'   = BST.remove    rootKey tree in
-                isValidBST tree'
+                isValidBST tree' minBound maxBound
