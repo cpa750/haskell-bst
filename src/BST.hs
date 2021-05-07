@@ -1,4 +1,12 @@
-module BST where
+module BST (
+    BST (Leaf, Node),
+    elements,
+    empty,
+    insert,
+    isEmpty,
+    lookup,
+    remove
+) where
 
 import Data.Eq
 import Data.Ord
