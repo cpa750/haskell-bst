@@ -28,7 +28,7 @@ middleElement :: [a] -> a
 middleElement list | List.length list > 0 = list !! ((List.length list) `div` 2)
 
 -- Inserts elements from a map (given a list of keys) into a BST
--- recursively from the middle element of the key list
+-- recursively from the middle element of the key list, in a balanced fashion
 insertIntoBST :: (Ord k) => Map k v -> [k] -> BST k v -> BST k v
 -- Lord forgive me for this awful code I've written
 insertIntoBST map keys tree
@@ -45,7 +45,6 @@ insertIntoBST map keys tree
             tree''      = insertIntoBST map firstHalf tree'
         in insertIntoBST map secondHalf tree''
 
-
 ---------------------------------------------------------------------------------
 -- Defining the generator for the BST datatype
 ---------------------------------------------------------------------------------
@@ -55,7 +54,8 @@ instance (Arbitrary k, Arbitrary v, Eq k, Ord k, Enum k, Bounded k, Random k) =>
     arbitrary = sized $ arbitrarySizeBST minBound maxBound 
 
 -- Generator function for a sized BST
-arbitrarySizeBST :: (Arbitrary k, Arbitrary v, Eq k, Ord k, Enum k, Bounded k, Random k) => k -> k -> Int -> Gen (BST k v)
+arbitrarySizeBST :: (Arbitrary k, Arbitrary v, Eq k, Ord k,
+                    Enum k, Bounded k, Random k) => k -> k -> Int -> Gen (BST k v)
 -- A tree with size 0 is just a leaf 
 arbitrarySizeBST low high 0 = return Leaf 
 arbitrarySizeBST low high n = do
