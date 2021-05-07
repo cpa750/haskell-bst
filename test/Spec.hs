@@ -24,6 +24,8 @@ isValidBST (Node key value t1 t2) min max = (key > min) && (key < max) &&
                                             (isValidBST t1 min key) &&
                                             (isValidBST t2 key max)
 
+-- Gets the middle element of the list, choosing the closest element on the right
+-- of the middle in the case the length is even
 middleElement :: [a] -> a
 middleElement list | List.length list > 0 = list !! ((List.length list) `div` 2)
 
@@ -77,7 +79,7 @@ arbitrarySizeBST low high n = do
 
 -- Sanity checking that a Leaf is an empty tree
 test_isEmptyWhenEmpty :: Assertion   
-test_isEmptyWhenEmpty = do assertEqual True (isEmpty Leaf) 
+test_isEmptyWhenEmpty = do assertBool (isEmpty Leaf) 
 
 -- Calling isEmpty on a non-empty tree should be False 
 test_isEmptyWhenNotEmpty :: Assertion 
@@ -110,7 +112,7 @@ test_lookupWhenEmpty = do
         -- Is there a way to do this so a type annotation isn't needed?
         assertNothing (BST.lookup 1 tree :: Maybe String)
 
--- Given a BST, a value should be able to be inserted with insert
+-- Given a valid BST, a value should be able to be inserted with insert
 -- and retrieved with lookup
 prop_insertAndLookupNotEmpty ::  Int -> String -> BST Int String -> Bool
 prop_insertAndLookupNotEmpty key value tree =
@@ -146,22 +148,26 @@ prop_insertElementsMatchesInputMapList map =
 -- Testing remove
 ---------------------------------------------------------------------------------
 
--- Removing a nonexistent key should not change the tree
+-- Removing a nonexistent key should not choange the tree
 prop_removeNonexistentKeyDoesntChangeTree :: Map Int String -> Int -> Bool
-prop_removeNonexistentKeyDoesntChangeTree map key =
-    let mapList = Map.toList map
-        tree    = remove key (insertIntoBST map (Map.keys map) empty) 
+prop_removeNonexistentKeyDoesntChangeTree map key 
+    -- Ensuring the key won't already be inserted
+    let map'    = Map.delete key map
+        mapList = Map.toList map'
+        tree    = remove key (insertIntoBST map' (Map.keys map') empty) 
     in mapList == (BST.elements tree)
 
 -- Adding and removing an element to and from a tree should result
--- in equal lists from the original tree and resulting tree 
+-- in equal lists from the original map and resulting tree 
 prop_removedFromTreeAndInputMapAreEqual :: Map Int String -> Int -> String -> Bool
 prop_removedFromTreeAndInputMapAreEqual map key value =
-    let tree    = insertIntoBST map (Map.keys map) empty 
+    -- Ensuring the key won't already be inserted
+    let map' = Map.delete key map
+        tree    = insertIntoBST map' (Map.keys map') empty 
         tree1   = BST.insert key value tree
         -- Should be the same as the original tree
         tree2   = BST.remove key tree1
-        mapList = Map.toList map
+        mapList = Map.toList map'
     in mapList == (BST.elements tree2)
 
 test_removeChildlessNode :: Assertion
@@ -171,8 +177,36 @@ test_removeChildlessNode = do
             tree'   = BST.remove 2 tree in
                 assertEqual (BST.elements tree') [(0, "b"), (1, "a")]
 
--- test_removeNodeWithLeftChild :: Assertion
--- test_removeNodeWithLeftChild = 
---     do
---         let map = Map.fromList [(1, "a"), (0, "b"), (3, "c"), ()]
+test_removeNodeWithLeftChild :: Assertion
+test_removeNodeWithLeftChild = 
+    do
+        let map     = Map.fromList [(1, "a"), (0, "b"), (3, "c"), (2, "d")]
+            tree    = insertIntoBST map (Map.keys map) empty
+            tree'   = BST.remove 1 tree in
+                assertEqual (BST.elements tree') [(0), "b"), (2, "d"), (3, "c")]
 
+test_removeNodeWithRightChild :: Assertion
+test_removeNodeWithRightChild =
+    do
+        let map     = Map.fromList [(1, "a"), (5, "b"), (3, "c"), (4, "d")]
+            tree    = insertIntoBST map (Map.keys map) empty
+            tree'   = BST.remove 4 tree in
+                assertEqual (BST.elements tree') [(0), "b"), (1, "a"), (5, "b")]
+
+test_removeRootOnlyNode :: Assertion
+test_removeRootOnlyNode = 
+    do
+        let tree    = BST.insert 1 "a" 
+            tree'   = BST.remove 1 tree in
+                assertBool (isEmpty tree')
+
+-- This also checks the case of a node with two children being removed,
+-- ensuring the result is still a valid BST
+prop_removeRootStillValidBST :: Map Int Str -> Bool
+prop_removeRootStillValidBST map =
+    do
+        let tree    = insertIntoBST map (Map.keys map) empty
+            -- Getting the first element inserted (root key)
+            rootKey = middleElement (Map.keys map)
+            tree'   = BST.remove    rootKey tree in
+                isValidBST tree'
