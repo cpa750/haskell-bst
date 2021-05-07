@@ -61,8 +61,21 @@ test_isEmptyWhenNotEmpty = do
         assertEqual False (isEmpty tree)
 
 ---------------------------------------------------------------------------------
+-- Testing empty 
+---------------------------------------------------------------------------------
+
+test_emptyIsEmpty :: Assertion
+test_emptyIsEmpty = do assertBool (isEmpty empty)
+
+test_emptyHasNoElements :: Assertion
+test_emptyHasNoElements = do
+    -- Is there a way to do this so a type annotation isn't needed?
+    assertEqual True (null ((BST.elements empty) :: [(Int, String)]))
+
+---------------------------------------------------------------------------------
 -- Testing insert and lookup 
 ---------------------------------------------------------------------------------
+
 test_lookupWhenEmpty :: Assertion 
 test_lookupWhenEmpty = do
     let tree = Leaf in
@@ -83,6 +96,9 @@ prop_isValidAfterInsertions map
                                 -- Inserting all the elements of the map into the BST
                                 let tree = Map.foldrWithKey BST.insert Leaf map
                                 in isValidBST tree minBound maxBound 
+
+---------------------------------------------------------------------------------
+-- Testing elements ---------------------------------------------------------------------------------
 
 prop_insertElementsMatchesInputMapList :: Map Int String -> Bool
 prop_insertElementsMatchesInputMapList map = 
