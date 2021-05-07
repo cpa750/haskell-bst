@@ -6,8 +6,10 @@ import System.Random
 import Test.QuickCheck
 import Test.HUnit
 
+import Data.List
 import Data.Map(Map)
 import qualified Data.Map as Map
+
 import Prelude hiding (lookup)
 
 import BST  
@@ -65,18 +67,25 @@ test_lookupWhenEmpty :: Assertion
 test_lookupWhenEmpty = do
     let tree = Leaf in
         -- Is there a way to do this so a type annotation isn't needed?
-        assertNothing (lookup 1 tree :: Maybe String)
+        assertNothing (BST.lookup 1 tree :: Maybe String)
 
 prop_insertAndLookupNotEmpty ::  Int -> String -> BST Int String -> Bool
 prop_insertAndLookupNotEmpty key value tree =
-    let tree' = insert key value tree in
-        lookup key tree' == Just value 
+    let tree' = BST.insert key value tree in
+        BST.lookup key tree' == Just value 
 
 prop_isValidAfterInsertions :: Map Int String -> Bool
--- I personally don't like I have to guard against an empty map,
+-- I don't like the fact that I have to guard against an empty map,
 -- But I can't figure out a way to restrict the input to a non-empty map.
-prop_isValidAfterInsertions map | Map.null map = True
-                                | otherwise = 
-                                    -- Inserting all the elements of the map into the BST
-                                    let tree = Map.foldrWithKey insert Leaf map
-                                    in isValidBST tree minBound maxBound 
+prop_isValidAfterInsertions map 
+                            | Map.null map = True
+                            | otherwise = 
+                                -- Inserting all the elements of the map into the BST
+                                let tree = Map.foldrWithKey BST.insert Leaf map
+                                in isValidBST tree minBound maxBound 
+
+prop_insertElementsMatchesInputMapList :: Map Int String -> Bool
+prop_insertElementsMatchesInputMapList map = 
+    let mapList = Map.toList map
+        tree    = Map.foldrWithKey BST.insert Leaf map
+    in  mapList == (BST.elements tree) 
