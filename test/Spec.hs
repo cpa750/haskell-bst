@@ -175,7 +175,7 @@ test_removeChildlessNode = do
         let map     = Map.fromList [(1, "a"), (0, "b"), (2, "c")]
             tree    = insertIntoBST map (Map.keys map) empty 
             tree'   = BST.remove 2 tree in
-                assertEqual (BST.elements tree') [(0, "b"), (1, "a")]
+                assertEqual [(0, "b"), (1, "a")] (BST.elements tree')
 
 test_removeNodeWithLeftChild :: Assertion
 test_removeNodeWithLeftChild = 
@@ -183,15 +183,16 @@ test_removeNodeWithLeftChild =
         let map     = Map.fromList [(1, "a"), (0, "b"), (3, "c"), (2, "d")]
             tree    = insertIntoBST map (Map.keys map) empty
             tree'   = BST.remove 1 tree in
-                assertEqual (BST.elements tree') [(0, "b"), (2, "d"), (3, "c")]
+                assertEqual [(0, "b"), (2, "d"), (3, "c")] (BST.elements tree')
 
 test_removeNodeWithRightChild :: Assertion
 test_removeNodeWithRightChild =
     do
-        let map     = Map.fromList [(1, "a"), (5, "b"), (3, "c"), (4, "d")]
+        let map     = Map.fromList [(1, "a"), (2, "b"), (3, "c"), (4, "d")]
             tree    = insertIntoBST map (Map.keys map) empty
-            tree'   = BST.remove 4 tree in
-                assertEqual (BST.elements tree') [(0, "b"), (1, "a"), (5, "b")]
+            tree2   = BST.insert 5 "e" tree
+            tree3   = BST.remove 4 tree2 in
+                assertEqual [(1, "a"), (2, "b"), (3, "c"), (5, "e")] (BST.elements tree3)
 
 test_removeRootOnlyNode :: Assertion
 test_removeRootOnlyNode = 
