@@ -45,9 +45,10 @@ elements (Node k v t1 t2) = elements t1 ++ [(k, v)] ++ elements t2
 
 remove :: (Ord k) => k -> BST k v -> BST k v
 remove _   Leaf                       = Leaf
-remove key (Node k v t1 t2) | key < k = Node k v (remove key t1) t2 
-                            | key > k = Node k v t1              (remove key t2) 
-                            | otherwise = removeNode (Node k v t1 t2)
+remove key (Node k v t1 t2) 
+                        | key < k = Node k v (remove key t1) t2 
+                        | key > k = Node k v t1              (remove key t2) 
+                        | otherwise = removeNode (Node k v t1 t2)
 
 removeNode :: (Ord k) => BST k v -> BST k v
 removeNode Leaf = Leaf
@@ -65,4 +66,9 @@ minElement (Node k v Leaf _) = (k, v)
 minElement (Node k v t1   _) = minElement t1 
 
 removeIf :: (Ord k) => (k -> Bool) -> BST k v -> BST k v
-removeIf _ tree = tree
+removeIf _  Leaf                    = Leaf
+removeIf p (Node k v t1 t2)
+                        | p k       =
+                            removeNode (Node k v (removeIf p t1) (removeIf p t2))
+                        | otherwise =
+                            Node k v (removeIf p t1) (removeIf p t2)

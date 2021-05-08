@@ -232,6 +232,8 @@ prop_removeIfFromTreeAndMapAreSame map =
             tree'       = BST.removeIf (\k -> (k `mod` 2) == 0) tree in
                 resultList == BST.elements tree'
 
+-- Calling removeIf with a predicate that is always true
+-- should always result in an empty tree
 prop_removeAllFromTreeIsEmpty :: BST Int String -> Bool
 prop_removeAllFromTreeIsEmpty tree =
     do
