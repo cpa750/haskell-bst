@@ -121,11 +121,12 @@ prop_insertAndLookupNotEmpty key value tree =
 
 -- Given a BST, a value replaced with insert should be the result of
 -- lookup
-prop_replaceAndLookupNotEmpty ::  Int -> String -> String -> BST Int String -> Bool
-prop_replaceAndLookupNotEmpty key value1 value2 tree =
-    let tree1 = BST.insert key value1 tree
-        tree2 = BST.insert key value2 tree1 in
-        BST.lookup key tree2 == Just value2 
+prop_replaceAndLookupNotEmpty ::  Int -> String -> BST Int String -> Bool
+prop_replaceAndLookupNotEmpty key value tree =
+    let tree1   = BST.insert key value tree
+        value'  = value ++ " updated"
+        tree2   = BST.insert key value' tree1 in
+        BST.lookup key tree2 == Just value' 
 
 -- Inserting into a BST should always result in a valid BST
 prop_isValidAfterInsertions :: Map Int String -> Bool
@@ -213,3 +214,7 @@ prop_removeRootStillValidBST map =
             tree'   = BST.remove    rootKey tree in
                 isValidBST tree' minBound maxBound
                 && (BST.lookup rootKey tree' == Nothing)
+
+---------------------------------------------------------------------------------
+-- Testing removeIf
+---------------------------------------------------------------------------------
