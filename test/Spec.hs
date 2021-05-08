@@ -18,6 +18,10 @@ import BST
 main :: IO ()
 main = htfMain htf_thisModulesTests 
 
+---------------------------------------------------------------------------------
+-- Test helper functions 
+---------------------------------------------------------------------------------
+
 isValidBST :: (Eq k, Ord k) => BST k v -> k -> k -> Bool
 isValidBST Leaf                   _   _   = True
 isValidBST (Node key value t1 t2) min max = (key > min) && (key < max) &&
