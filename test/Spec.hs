@@ -202,7 +202,8 @@ test_removeRootOnlyNode =
                 assertBool (isEmpty tree')
 
 -- This also checks the case of a node with two children being removed,
--- ensuring the result is still a valid BST
+-- ensuring the result is still a valid BST and that the original root
+-- isn't in the tree any more.
 prop_removeRootStillValidBST :: Map Int String -> Bool
 prop_removeRootStillValidBST map =
     do
@@ -211,3 +212,4 @@ prop_removeRootStillValidBST map =
             rootKey = middleElement (Map.keys map)
             tree'   = BST.remove    rootKey tree in
                 isValidBST tree' minBound maxBound
+                && (BST.lookup rootKey tree' == Nothing)
