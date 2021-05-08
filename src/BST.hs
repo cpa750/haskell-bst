@@ -5,7 +5,8 @@ module BST (
     insert,
     isEmpty,
     lookup,
-    remove
+    remove,
+    removeIf
 ) where
 
 import Data.Eq
@@ -62,3 +63,6 @@ removeNode (Node _ _ t1     t2) = let element = minElement t2
 minElement :: (Ord k) => BST k v -> (k, v) 
 minElement (Node k v Leaf _) = (k, v) 
 minElement (Node k v t1   _) = minElement t1 
+
+removeIf :: (Ord k) => (k -> Bool) -> BST k v -> BST k v
+removeIf _ tree = tree

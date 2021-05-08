@@ -218,3 +218,22 @@ prop_removeRootStillValidBST map =
 ---------------------------------------------------------------------------------
 -- Testing removeIf
 ---------------------------------------------------------------------------------
+
+-- Removing from a standard map and from a tree using the same predicate
+-- should result in the same list of elements
+prop_removeIfFromTreeAndMapAreSame :: Map Int String -> Bool
+prop_removeIfFromTreeAndMapAreSame map =
+    do
+        let tree        = insertIntoBST map (Map.keys map) empty
+            -- Getting the list elements in the map that don't satisfy the predicate,
+            -- i.e. the list of the remaining elements after a removeIf on an equivalent
+            -- tree. 
+            resultList  = Map.toList (snd (Map.partitionWithKey (\k _ -> (k `mod` 2) == 0) map)) 
+            tree'       = BST.removeIf (\k -> (k `mod` 2) == 0) tree in
+                resultList == BST.elements tree'
+
+prop_removeAllFromTreeIsEmpty :: BST Int String -> Bool
+prop_removeAllFromTreeIsEmpty tree =
+    do
+        let tree' = BST.removeIf (\_ -> True) tree in
+            isEmpty tree'
