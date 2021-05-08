@@ -51,6 +51,13 @@ insertIntoBST map keys tree
 -- Defining the generator for the BST datatype
 ---------------------------------------------------------------------------------
 
+{-
+    The generator code is not entirely my own;
+    code from the following sources has been referenced and modified:
+    https://cs.pomona.edu/~michael/courses/csci131f15/lec/lec22.html
+    https://www.stackbuilders.com/news/a-quickcheck-tutorial-generators
+-}
+
 -- Defining Arbitrary for the BST Type 
 instance (Arbitrary k, Arbitrary v, Eq k, Ord k, Enum k, Bounded k, Random k) => Arbitrary (BST k v) where
     arbitrary = sized $ arbitrarySizeBST minBound maxBound 

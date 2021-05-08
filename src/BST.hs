@@ -23,17 +23,17 @@ data BST k v = Leaf | Node k v (BST k v) (BST k v) deriving Show
 
 elements :: (Ord k) => BST k v -> [(k, v)] 
 elements Leaf             = []
-elements (Node k v t1 t2) = elements t1 ++ [(k, v)] ++ elements t2
+elements (Node k v l r)   = elements l ++ [(k, v)] ++ elements r
 
 empty :: BST k v
 empty = Leaf
 
 insert :: (Ord k) => k -> v -> BST k v -> BST k v
 insert key value Leaf                = Node key value Leaf Leaf 
-insert key value (Node k v t1 t2)  
-                        | key > k    = Node k v t1 (insert key value t2)                        
-                        | key < k    = Node k v (insert key value t1) t2
-                        | otherwise  = Node key value t1 t2
+insert key value (Node k v l r)  
+                        | key > k    = Node k v l (insert key value r)                        
+                        | key < k    = Node k v (insert key value l) r
+                        | otherwise  = Node key value l r
 
 isEmpty :: BST k v -> Bool 
 isEmpty Leaf = True
@@ -42,25 +42,25 @@ isEmpty _    = False
 
 lookup :: (Ord k) =>  k -> BST k v -> Maybe v
 lookup _   Leaf                      = Nothing
-lookup key (Node k v t1 t2)
-                        | key > k    = lookup key t2
-                        | key < k    = lookup key t1
+lookup key (Node k v l r)
+                        | key > k    = lookup key r
+                        | key < k    = lookup key l
                         | otherwise  = Just v
 
 remove :: (Ord k) => k -> BST k v -> BST k v
 remove _   Leaf                       = Leaf
-remove key (Node k v t1 t2) 
-                        | key < k = Node k v (remove key t1) t2 
-                        | key > k = Node k v t1              (remove key t2) 
-                        | otherwise = removeNode (Node k v t1 t2)
+remove key (Node k v l r) 
+                        | key < k = Node k v (remove key l) r 
+                        | key > k = Node k v l              (remove key r) 
+                        | otherwise = removeNode (Node k v l r)
 
 removeIf :: (Ord k) => (k -> Bool) -> BST k v -> BST k v
 removeIf _  Leaf                    = Leaf
-removeIf p (Node k v t1 t2)
+removeIf p (Node k v l r)
                         | p k       =
-                            removeNode (Node k v (removeIf p t1) (removeIf p t2))
+                            removeNode (Node k v (removeIf p l) (removeIf p r))
                         | otherwise =
-                            Node k v (removeIf p t1) (removeIf p t2)
+                            Node k v (removeIf p l) (removeIf p r)
 
 ---------------------------------------------------------------------------------
 -- Helper functions, not exported 
@@ -68,16 +68,15 @@ removeIf p (Node k v t1 t2)
 
 minElement :: (Ord k) => BST k v -> (k, v) 
 minElement (Node k v Leaf _) = (k, v) 
-minElement (Node k v t1   _) = minElement t1 
+minElement (Node k v l    _) = minElement l 
 
 removeNode :: (Ord k) => BST k v -> BST k v
 removeNode Leaf = Leaf
 removeNode (Node _ _ Leaf Leaf) = Leaf
-removeNode (Node _ _ t1   Leaf) = t1  
-removeNode (Node _ _ Leaf   t2) = t2
-removeNode (Node _ _ t1     t2) = let element = minElement t2
+removeNode (Node _ _ l   Leaf)  = l 
+removeNode (Node _ _ Leaf   r)  = r 
+removeNode (Node _ _ l      r)  = let element = minElement r 
                                       key     = fst element
                                       value   = snd element
-                                      t2'     = remove key t2
-                                      in Node key value t1 t2'
-
+                                      r'     = remove key r 
+                                      in Node key value l r'
