@@ -22,7 +22,7 @@ main = htfMain htf_thisModulesTests
 -- Test helper functions 
 ---------------------------------------------------------------------------------
 
-isValidBST :: (Eq k, Ord k) => BST k v -> k -> k -> Bool
+isValidBST :: (Ord k) => BST k v -> k -> k -> Bool
 isValidBST Leaf                   _   _   = True
 isValidBST (Node key value t1 t2) min max = (key > min) && (key < max) &&
                                             (isValidBST t1 min key) &&
@@ -63,11 +63,11 @@ insertIntoBST map keys tree
 -}
 
 -- Defining Arbitrary for the BST Type 
-instance (Arbitrary k, Arbitrary v, Eq k, Ord k, Enum k, Bounded k, Random k) => Arbitrary (BST k v) where
+instance (Arbitrary k, Arbitrary v, Ord k, Enum k, Bounded k, Random k) => Arbitrary (BST k v) where
     arbitrary = sized $ arbitrarySizeBST minBound maxBound 
 
 -- Generator function for a sized BST
-arbitrarySizeBST :: (Arbitrary k, Arbitrary v, Eq k, Ord k,
+arbitrarySizeBST :: (Arbitrary k, Arbitrary v, Ord k,
                     Enum k, Bounded k, Random k) => k -> k -> Int -> Gen (BST k v)
 -- A tree with size 0 is just a leaf 
 arbitrarySizeBST low high 0 = return Leaf 

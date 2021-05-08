@@ -9,7 +9,6 @@ module BST (
     removeIf
 ) where
 
-import Data.Eq
 import Data.Ord
 
 import Prelude hiding (lookup)
@@ -55,7 +54,7 @@ remove key (Node k v l r)
                         | otherwise = removeNode (Node k v l r)
 
 removeIf :: (Ord k) => (k -> Bool) -> BST k v -> BST k v
-removeIf _  Leaf                    = Leaf
+removeIf _ Leaf                     = Leaf
 removeIf p (Node k v l r)
                         | p k       =
                             removeNode (Node k v (removeIf p l) (removeIf p r))
@@ -78,5 +77,5 @@ removeNode (Node _ _ Leaf   r)  = r
 removeNode (Node _ _ l      r)  = let element = minElement r 
                                       key     = fst element
                                       value   = snd element
-                                      r'     = remove key r 
+                                      r'      = remove key r 
                                       in Node key value l r'
