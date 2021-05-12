@@ -215,6 +215,8 @@ test_removeRootOnlyNode =
 -- ensuring the result is still a valid BST and that the original root
 -- isn't in the tree any more.
 prop_removeRootMatchesMap :: Map Int String -> Property 
+-- Constraining input sizes so that only trees which would need to pass
+-- the test are created
 prop_removeRootMatchesMap map = (Map.size map) > 3 ==>
     do
         let tree    = insertIntoBST map (Map.keys map) empty
@@ -229,6 +231,8 @@ prop_removeRootMatchesMap map = (Map.size map) > 3 ==>
 -- in a valid BST, the element is gone from the tree,
 -- and the result matches a map with the same operation applied
 prop_removeSecondElementMatchesMap :: Map Int String -> Property
+-- Constraining input sizes so that only trees which would need to pass
+-- the test are created
 prop_removeSecondElementMatchesMap map = (Map.size map) > 7 ==>
     do
         let tree        = insertIntoBST map (Map.keys map) empty
