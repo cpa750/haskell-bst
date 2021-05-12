@@ -225,6 +225,9 @@ prop_removeRootMatchesMap map = (Map.size map) > 3 ==>
                 && (BST.lookup rootKey tree' == Nothing)
                 && ((Map.toList (Map.delete rootKey map)) == (BST.elements tree'))
 
+-- This checks that removing a non-root node still results
+-- in a valid BST, the element is gone from the tree,
+-- and the result matches a map with the same operation applied
 prop_removeSecondElementMatchesMap :: Map Int String -> Property
 prop_removeSecondElementMatchesMap map = (Map.size map) > 7 ==>
     do
