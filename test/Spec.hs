@@ -141,8 +141,6 @@ prop_replaceAndLookupNotEmpty key value tree =
 
 -- Inserting into a BST should always result in a valid BST
 prop_isValidAfterInsertions :: Map Int String -> Bool
--- I don't like the fact that I have to guard against an empty map,
--- But I can't figure out a way to restrict the input to a non-empty map.
 prop_isValidAfterInsertions map = 
     -- Inserting all the elements of the map into the BST
     let tree = insertIntoBST map (Map.keys map) empty 
@@ -216,8 +214,8 @@ test_removeRootOnlyNode =
 -- This also checks the case of a node with two children being removed,
 -- ensuring the result is still a valid BST and that the original root
 -- isn't in the tree any more.
-prop_removeRootStillValidBST :: Map Int String -> Bool
-prop_removeRootStillValidBST map =
+prop_removeRootMatchesMap :: Map Int String -> Property 
+prop_removeRootMatchesMap map = (Map.size map) > 3 ==>
     do
         let tree    = insertIntoBST map (Map.keys map) empty
             -- Getting the first element inserted (root key)
@@ -225,6 +223,20 @@ prop_removeRootStillValidBST map =
             tree'   = BST.remove    rootKey tree in
                 isValidBST tree' minBound maxBound
                 && (BST.lookup rootKey tree' == Nothing)
+                && ((Map.toList (Map.delete rootKey map)) == (BST.elements tree'))
+
+prop_removeSecondElementMatchesMap :: Map Int String -> Property
+prop_removeSecondElementMatchesMap map = (Map.size map) > 7 ==>
+    do
+        let tree        = insertIntoBST map (Map.keys map) empty
+            -- Getting the second key inserted
+            rootKey     = middleElement (Map.keys map)
+            secondKey   = middleElement (filter (> rootKey) (Map.keys map))
+            tree'       = BST.remove    secondKey tree in
+                isValidBST tree' minBound maxBound
+                && (BST.lookup secondKey tree' == Nothing)
+                && ((Map.toList (Map.delete secondKey map)) == (BST.elements tree'))
+
 
 ---------------------------------------------------------------------------------
 -- Testing removeIf
