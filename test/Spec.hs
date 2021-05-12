@@ -30,6 +30,10 @@ isValidBST (Node key value t1 t2) min max = (key > min) && (key < max) &&
 
 -- Gets the middle element of the list, choosing the closest element on the right
 -- of the middle in the case the length is even
+-- I know this doesn't work with lists length == 0, 
+-- but it is never called like that in these tests.
+-- If I had time, I would fix it, perhaps with the Maybe monad,
+-- but it works for the tests as they are now.
 middleElement :: [a] -> a
 middleElement list | List.length list > 0 = list !! ((List.length list) `div` 2)
 
