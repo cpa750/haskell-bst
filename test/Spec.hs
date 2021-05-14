@@ -31,7 +31,7 @@ isValidBST (Node key value t1 t2) min max = (key > min) && (key < max) &&
 -- Gets the middle element of the list, choosing the closest element on the right
 -- of the middle in the case the length is even
 -- I know this doesn't work with lists length == 0, 
--- but it is never called like that in these tests.
+-- but it is never called in that situation in these tests.
 -- If I had time, I would fix it, perhaps with the Maybe monad,
 -- but it works for the tests as they are now.
 middleElement :: [a] -> a
@@ -162,7 +162,7 @@ prop_insertElementsMatchesInputMapList map =
 -- Testing remove
 ---------------------------------------------------------------------------------
 
--- Removing a nonexistent key should not choange the tree
+-- Removing a nonexistent key should not change the tree
 prop_removeNonexistentKeyDoesntChangeTree :: Map Int String -> Int -> Bool
 prop_removeNonexistentKeyDoesntChangeTree map key = 
     -- Ensuring the key won't already be inserted
